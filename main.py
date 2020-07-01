@@ -1,22 +1,20 @@
-# -*- coding: utf-8 -*-
-"""Tutorial on using the server functions."""
-
-from __future__ import print_function
 import argparse
-
-import datetime
-import random
-import time, psutil
-
+import psutil, socket
 from influxdb import InfluxDBClient
 from influxdb.client import InfluxDBClientError
-
-USER = 'admin'
-PASSWORD = 'Password1'
-DBNAME = 'cpu_usage'
+from configparser import ConfigParser
 
 
-def main(host='3.7.64.142', port=8086):
+parser = ConfigParser()
+parser.read('secret.config')
+db_host = parser.get('db_credentials', 'db_host')
+db_port = parser.get('db_credentials', 'db_port')
+USER = parser.get('db_credentials', 'db_user')
+PASSWORD = parser.get('db_credentials', 'db_passwd')
+DBNAME = parser.get('db_credentials', 'db_name')
+
+
+def main(host=db_host, port=db_port):
     client = InfluxDBClient(host, port, USER, PASSWORD, DBNAME)
     print("Create database: " + DBNAME)
     try:
@@ -24,31 +22,29 @@ def main(host='3.7.64.142', port=8086):
     except InfluxDBClientError as e:
         print(e)
 
-    metric = "server1"
-    series = []
+    metric = socket.gethostname()
     while True:
         pointValues = [{
             "measurement": metric,
             "fields": {
-                "value": psutil.cpu_percent(interval=1),
+                "cpu_usage": psutil.cpu_percent(interval=1),
+                "cpu_count": psutil.cpu_count(logical=True),
+                "memory_total": float('%.2f' % (psutil.virtual_memory().total / (1024.0 ** 3))),
+                "memory_usage": psutil.virtual_memory().percent,
+                "disk_usage of /": psutil.disk_usage('/').percent,
+                "disk_usage of /home": psutil.disk_usage('/home').percent,
             },
             "tags": {
-                "hostName": "106.215.151.188",
+                "hostName": socket.gethostname(),
             },
         }]
         client.write_points(pointValues)
 
 def parse_args():
     """Parse the args."""
-    parser = argparse.ArgumentParser(
-        description='example code to play with InfluxDB')
-    parser.add_argument('--host', type=str, required=False,
-                        default='3.7.64.142',
-                        help='hostname influxdb http API')
-    parser.add_argument('--port', type=int, required=False, default=8086,
-                        help='port influxdb http API')
-    parser.add_argument('--nb_day', type=int, required=False, default=15,
-                        help='number of days to generate time series data')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host', type=str, required=False, default=db_host, help='hostname influxdb http API')
+    parser.add_argument('--port', type=int, required=False, default=db_port, help='port influxdb http API')
     return parser.parse_args()
 
 
