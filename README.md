@@ -1,6 +1,7 @@
 # Python monitoring agent 
 
 Python monitoring agent export CPU, Memory, Storage partitions metrics and service logs to InfluxDB which is an open-source time series database.
+> In this solution, I have used 2 docker-containers hosting influxDB and Grafana.
 
 ### Requirements for this solution to run:
   - Python ver. 3.5 or greater
@@ -53,4 +54,5 @@ $ python main.py
 ```
 
 ### Visualization:
-Log on to 
+For visualization of metric I have used Grafana visualization web application hosted on container.
+![Screen Short](img/grafana-s1.png)
