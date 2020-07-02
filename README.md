@@ -56,4 +56,6 @@ $ python main.py
 ### Visualization:
 > For visualization of metric I have used Grafana visualization web application hosted on container.
 
+Created a dashboard for the visualization with the name Server-metric.
+
 ![Screen Short](img/grafana-s1.png)
