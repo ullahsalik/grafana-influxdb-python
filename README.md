@@ -3,6 +3,13 @@
 Python monitoring agent export CPU, Memory, Storage partitions metrics and service logs to InfluxDB which is an open-source time series database.
 > In this solution, I have used 2 docker-containers hosting influxDB and Grafana.
 
+### Visualization:
+> For visualization of metric I have used Grafana visualization web application hosted on container.
+
+Created a dashboard for the visualization with the name Server-metric.
+
+![Screen Short](img/grafana-s1.png)
+
 ### Requirements for this solution to run:
   - Python ver. 3.5 or greater
   - Influxdb for storage
@@ -53,9 +60,3 @@ log_file_path = /var/log/syslog
 $ python main.py
 ```
 
-### Visualization:
-> For visualization of metric I have used Grafana visualization web application hosted on container.
-
-Created a dashboard for the visualization with the name Server-metric.
-
-![Screen Short](img/grafana-s1.png)
